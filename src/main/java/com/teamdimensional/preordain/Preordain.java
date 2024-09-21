@@ -1,5 +1,7 @@
 package com.teamdimensional.preordain;
 
+import com.teamdimensional.preordain.core.document.DocumentLoader;
+import com.teamdimensional.preordain.library.function.PreordainFunctions;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +20,8 @@ public class Preordain {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOGGER.info("Hello From {}!", Tags.MOD_NAME);
+        PreordainFunctions.init();
+        DocumentLoader.load(event.getSuggestedConfigurationFile().getParentFile().getParentFile());
     }
 
 }
