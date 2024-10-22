@@ -45,7 +45,7 @@ public class DataSerializers {
                 throw new JsonParseException("Invalid item metadata in the itemstack: " + s);
             }
         }
-        return new ItemStack(it, meta);
+        return new ItemStack(it, 1, meta);
     }
 
     public static ItemStack getStack(JsonElement e) throws JsonParseException {
