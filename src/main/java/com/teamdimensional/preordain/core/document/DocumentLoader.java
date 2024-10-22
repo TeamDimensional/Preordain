@@ -77,8 +77,9 @@ public class DocumentLoader {
                 loadFile(file);
             }
         }
+    }
 
-        // then initialize them
+    public static void init() {
         for (Map.Entry<String, PreordainDocument> entry : documents.entrySet()) {
             try {
                 entry.getValue().initialize();

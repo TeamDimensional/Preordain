@@ -1,15 +1,20 @@
 package com.teamdimensional.preordain.core.document;
 
+import com.teamdimensional.preordain.Preordain;
+import com.teamdimensional.preordain.core.PreordainTooltipManager;
+import com.teamdimensional.preordain.renderer.PreordainRenderingManager;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
+@Mod.EventBusSubscriber
 public class DocumentItemLinker {
-    // TODO: study https://github.com/westernat/Create-Ponder/blob/ponder/src/main/java/com/simibubi/create/foundation/ponder/PonderTooltipHandler.java
-
     public static final Map<String, PreordainDocument> links = new Object2ObjectOpenHashMap<>();
 
     private static String stringify(ItemStack it) {
@@ -22,6 +27,24 @@ public class DocumentItemLinker {
 
     private static @Nullable PreordainDocument getLink(ItemStack it) {
         return links.get(stringify(it));
+    }
+
+    @SubscribeEvent
+    public static void addTooltip(ItemTooltipEvent event) {
+        if (event.getEntityPlayer() == null) return;
+        String key = stringify(event.getItemStack());
+        if (links.containsKey(key)) {
+            PreordainTooltipManager.INSTANCE.manageTooltip(event);
+        }
+    }
+
+    public static void showDocumentForItem(ItemStack stack) {
+        String key = stringify(stack);
+        if (links.containsKey(key)) {
+            PreordainRenderingManager.showDocument(links.get(key));
+        } else {
+            Preordain.LOGGER.error("Undocumented item: {}! This should not happen.", stack);
+        }
     }
 
 }

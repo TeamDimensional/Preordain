@@ -1,6 +1,8 @@
 package com.teamdimensional.preordain.core.document;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonParseException;
+import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
 import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
@@ -49,9 +51,13 @@ public class PreordainDocument {
             throw new IllegalArgumentException("Preordain documents must have a size field with exactly 3 integers");
         }
         if (links != null) {
-            for (String s : links) {
-                ItemStack stack = DataSerializers.getStack(s);
-                DocumentItemLinker.registerLink(this, stack);
+            try {
+                for (String s : links) {
+                    ItemStack stack = DataSerializers.getStack(s);
+                    DocumentItemLinker.registerLink(this, stack);
+                }
+            } catch (JsonParseException e) {
+                Preordain.LOGGER.warn("Unknown item to bind document {} to! It won't be displayed.", key);
             }
         }
 
