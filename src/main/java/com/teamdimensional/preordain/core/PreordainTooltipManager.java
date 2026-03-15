@@ -22,8 +22,8 @@ public class PreordainTooltipManager {
     public static final PreordainTooltipManager INSTANCE = new PreordainTooltipManager();
     public static final KeyBinding PREORDAIN_KEY = new KeyBinding("keybind.preordain.observe", Keyboard.KEY_W, "keybind.preordain.category");
 
-    private static final int TOTAL_CHARS = 16;
-    private static final int TICKS_PER_CHAR = 5;
+    private static final int TOTAL_CHARS = 12;
+    private static final int TICKS_PER_CHAR = 3;
 
     public static void init() {
         ClientRegistry.registerKeyBinding(PREORDAIN_KEY);

@@ -2,11 +2,17 @@ package com.teamdimensional.preordain.renderer;
 
 import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.document.PreordainDocument;
-import org.apache.commons.lang3.NotImplementedException;
+import com.teamdimensional.preordain.renderer.ponder.scene.GuiPonder;
+import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
+import net.minecraft.client.Minecraft;
 
 public class PreordainRenderingManager {
     public static void showDocument(PreordainDocument doc) {
         Preordain.LOGGER.info("Showing document: {}", doc.getKey());
-        throw new NotImplementedException("Preordains are NYI");
+
+        GuiPonder gui = new GuiPonder(
+                Minecraft.getMinecraft().currentScreen,
+                new WorldPonder(Minecraft.getMinecraft().profiler, doc));
+        Minecraft.getMinecraft().displayGuiScreen(gui);
     }
 }

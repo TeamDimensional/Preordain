@@ -2,9 +2,10 @@ package com.teamdimensional.preordain.library.function;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
-import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
+import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -22,15 +23,18 @@ public class FunctionCheckerboard extends PreordainFunction {
     }
 
     @Override
-    public void apply(PreordainRenderRegion renderRegion) {
+    public void apply(WorldPonder world) {
+        int b = 0;
         for (int i = (int) boundingBox.minX; i <= boundingBox.maxX; i++) {
             for (int j = (int) boundingBox.minY; j <= boundingBox.maxY; j++) {
                 for (int k = (int) boundingBox.minZ; k <= boundingBox.maxZ; k++) {
                     IBlockState toSet = (i + j + k) % 2 == 0 ? state1 : state2;
-                    renderRegion.world.setBlockState(new BlockPos(i, j, k), toSet);
+                    world.setBlockState(new BlockPos(i, j, k), toSet);
+                    b++;
                 }
             }
         }
+        Preordain.LOGGER.info("Added {} blocks", b);
     }
 
     public static FunctionCheckerboard create(JsonElement e) {

@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
-import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
+import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
@@ -19,8 +19,8 @@ public class FunctionBlock extends PreordainFunction {
     }
 
     @Override
-    public void apply(PreordainRenderRegion renderRegion) {
-        renderRegion.world.setBlockState(position, state);
+    public void apply(WorldPonder world) {
+        world.setBlockState(position, state);
     }
 
     public static FunctionBlock create(JsonElement e) {

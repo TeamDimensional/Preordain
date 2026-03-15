@@ -5,7 +5,6 @@ import com.google.gson.JsonParseException;
 import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
-import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -17,18 +16,16 @@ public class PreordainDocument {
 
     private String key = null;
     private String parent = null;
-    private Integer[] size = null;
     private List<PreordainFunction> functions = new ArrayList<>();
     private boolean visible = true;
     private String title = "";
     private String[] links = null;
 
-    public Integer[] getSize() {
-        return size;
-    }
-
     public ImmutableList<PreordainFunction> getFunctions() {
         return ImmutableList.copyOf(functions);
+    }
+    public String getTitle() {
+        return title;
     }
 
     private transient int initState = 0;
@@ -44,11 +41,7 @@ public class PreordainDocument {
             }
             PreordainDocument parentDoc = DocumentLoader.documents.get(parent);
             parentDoc.initialize();
-            if (size == null) size = parentDoc.getSize();
             functions = Stream.concat(parentDoc.getFunctions().stream(), functions.stream()).collect(Collectors.toList());
-        }
-        if (size == null || size.length != 3) {
-            throw new IllegalArgumentException("Preordain documents must have a size field with exactly 3 integers");
         }
         if (links != null) {
             try {
@@ -75,10 +68,9 @@ public class PreordainDocument {
         return key;
     }
 
-    public void apply(PreordainRenderRegion region) {
-        region.setSize(size);
+    public void initialize(PreordainPlanner planner) {
         for (PreordainFunction function : functions) {
-            function.apply(region);
+            planner.register(function, function.getDelay());
         }
     }
 

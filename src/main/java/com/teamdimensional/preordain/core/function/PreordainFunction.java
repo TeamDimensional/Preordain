@@ -1,9 +1,19 @@
 package com.teamdimensional.preordain.core.function;
 
-import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
+import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
 
 public abstract class PreordainFunction {
 
-    public abstract void apply(PreordainRenderRegion renderRegion);
+    long delay = 0;
+
+    public abstract void apply(WorldPonder world);
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public boolean requiresMeshUpdate() {
+        return true;
+    }
 
 }

@@ -1,12 +1,11 @@
 {
   "key": "preordain:base",
-  "size": [5, 5, 5],
   "visible": false,
   "functions": [
     {
       "name": "preordain:checkerboard",
       "data": {
-        "bbox": [[0, 0, 0], [4, 0, 4]],
+        "bbox": [[-4, -4, -4], [4, 4, 4]],
         "block1": "minecraft:stone:1",
         "block2": "minecraft:wool"
       }

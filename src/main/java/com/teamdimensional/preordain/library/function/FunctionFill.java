@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
-import com.teamdimensional.preordain.renderer.PreordainRenderRegion;
+import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -20,11 +20,11 @@ public class FunctionFill extends PreordainFunction {
     }
 
     @Override
-    public void apply(PreordainRenderRegion renderRegion) {
+    public void apply(WorldPonder world) {
         for (int i = (int) boundingBox.minX; i <= boundingBox.maxX; i++) {
             for (int j = (int) boundingBox.minY; j <= boundingBox.maxY; j++) {
                 for (int k = (int) boundingBox.minZ; k <= boundingBox.maxZ; k++) {
-                    renderRegion.world.setBlockState(new BlockPos(i, j, k), state);
+                    world.setBlockState(new BlockPos(i, j, k), state);
                 }
             }
         }
