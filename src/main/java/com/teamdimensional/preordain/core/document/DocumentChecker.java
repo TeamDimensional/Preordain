@@ -43,7 +43,7 @@ public class DocumentChecker {
     private List<String> getChain(String key) {
         Set<String> items = new HashSet<>();
         List<String> out = new ArrayList<>();
-        while (!out.contains(key)) {
+        while (key != null && !out.contains(key)) {
             out.add(key);
             items.add(key);
             key = dependencies.get(key);
