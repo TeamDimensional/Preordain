@@ -7,8 +7,13 @@ import com.teamdimensional.preordain.core.document.DocumentChecker.DocumentCheck
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.core.function.PreordainFunctionDeserializer;
 import com.teamdimensional.preordain.library.RevertibleRegistry;
+import com.teamdimensional.preordain.library.serialization.DataSerializers;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -22,12 +27,17 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 public class DocumentLoader {
+    private static final String DOCUMENT_PATH = "preordain";
+    public static final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(PreordainFunction.class, new PreordainFunctionDeserializer())
+        .registerTypeAdapter(ItemStack.class, new DataSerializers.ItemStackDeserializer())
+        .registerTypeAdapter(AxisAlignedBB.class, new DataSerializers.AxisAlignedBBDeserializer())
+        .registerTypeAdapter(IBlockState.class, new DataSerializers.BlockStateDeserializer())
+        .registerTypeAdapter(BlockPos.class, new DataSerializers.BlockPosDeserializer())
+        .create();
+
     private final RevertibleRegistry<Map<String, PreordainDocument>> documents
         = new RevertibleRegistry<>(Object2ObjectOpenHashMap::new);
-    private final String DOCUMENT_PATH = "preordain";
-    private final Gson gson = new GsonBuilder()
-        .registerTypeAdapter(PreordainFunction.class, new PreordainFunctionDeserializer())
-        .create();
     private File instanceDir = null;
     public final DocumentItemLinker linker = new DocumentItemLinker();
 
@@ -54,7 +64,7 @@ public class DocumentLoader {
         this.instanceDir = instanceDir;
     }
 
-    public void load() {
+    public boolean load() {
         documents.beginTransaction();
         linker.links.beginTransaction();
 
@@ -90,9 +100,7 @@ public class DocumentLoader {
         }
 
         Preordain.LOGGER.info("Loaded " + count() + " files");
-    }
 
-    public boolean init() {
         for (Map.Entry<String, PreordainDocument> entry : documents.get().entrySet()) {
             entry.getValue().loadLinks(this.linker);
         }

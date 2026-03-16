@@ -1,6 +1,10 @@
 package com.teamdimensional.preordain.library.serialization;
 
+import java.lang.reflect.Type;
+
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import net.minecraft.block.Block;
@@ -14,12 +18,44 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class DataSerializers {
 
-    public static BlockPos getBlockPos(JsonElement e) throws JsonParseException {
+    public static class BlockPosDeserializer implements JsonDeserializer<BlockPos> {
+        @Override
+        public BlockPos deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            return getBlockPos(json);
+        }
+    }
+
+    public static class AxisAlignedBBDeserializer implements JsonDeserializer<AxisAlignedBB> {
+        @Override
+        public AxisAlignedBB deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            return getBoundingBox(json);
+        }
+    }
+
+    public static class ItemStackDeserializer implements JsonDeserializer<ItemStack> {
+        @Override
+        public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            return getStack(json);
+        }
+    }
+
+    public static class BlockStateDeserializer implements JsonDeserializer<IBlockState> {
+        @Override
+        public IBlockState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            return getBlockState(json);
+        }
+    }
+
+    private static BlockPos getBlockPos(JsonElement e) throws JsonParseException {
         JsonArray o = e.getAsJsonArray();
         return new BlockPos(o.get(0).getAsInt(), o.get(1).getAsInt(), o.get(2).getAsInt());
     }
 
-    public static AxisAlignedBB getBoundingBox(JsonElement e) throws JsonParseException {
+    private static AxisAlignedBB getBoundingBox(JsonElement e) throws JsonParseException {
         JsonArray o = e.getAsJsonArray();
         BlockPos p1 = getBlockPos(o.get(0));
         BlockPos p2 = getBlockPos(o.get(1));
@@ -75,7 +111,7 @@ public class DataSerializers {
         return b.getStateFromMeta(meta);
     }
 
-    public static IBlockState getBlockState(JsonElement e) throws JsonParseException {
+    private static IBlockState getBlockState(JsonElement e) throws JsonParseException {
         return getBlockState(e.getAsString());
     }
 

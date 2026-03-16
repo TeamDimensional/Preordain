@@ -5,10 +5,10 @@ import com.teamdimensional.preordain.core.function.PreordainFunctionRegistry;
 public class PreordainFunctions {
 
     public static void init() {
-        PreordainFunctionRegistry.register("preordain:block", FunctionBlock::create);
-        PreordainFunctionRegistry.register("preordain:fill", FunctionFill::create);
-        PreordainFunctionRegistry.register("preordain:checkerboard", FunctionCheckerboard::create);
-        PreordainFunctionRegistry.register("preordain:subdocument", FunctionSubdocument::create);
+        PreordainFunctionRegistry.register("preordain:block", FunctionBlock.class);
+        PreordainFunctionRegistry.register("preordain:fill", FunctionFill.class);
+        PreordainFunctionRegistry.register("preordain:checkerboard", FunctionCheckerboard.class);
+        PreordainFunctionRegistry.register("preordain:subdocument", FunctionSubdocument.class);
     }
 
 }

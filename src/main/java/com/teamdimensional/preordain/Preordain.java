@@ -29,13 +29,12 @@ public class Preordain {
         LOGGER.info("Loading Preordain configurations...");
         PreordainFunctions.init();
         loader = new DocumentLoader(event.getSuggestedConfigurationFile().getParentFile().getParentFile());
-        loader.load();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         LOGGER.info("Initializing Preordain registries...");
-        loader.init();
+        loader.load();
         PreordainTooltipManager.init();
     }
 

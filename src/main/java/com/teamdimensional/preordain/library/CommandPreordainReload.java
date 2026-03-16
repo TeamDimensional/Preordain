@@ -23,9 +23,8 @@ public class CommandPreordainReload extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        Preordain.loader.load();
         String text;
-        if (Preordain.loader.init()) {
+        if (Preordain.loader.load()) {
             text = I18n.format("command.preordain_reload.success", Preordain.loader.count());
         } else {
             text = I18n.format("command.preordain_reload.failure");
