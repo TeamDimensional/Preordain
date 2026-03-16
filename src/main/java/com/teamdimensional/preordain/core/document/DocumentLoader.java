@@ -2,6 +2,7 @@ package com.teamdimensional.preordain.core.document;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.document.DocumentChecker.DocumentCheckingException;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
@@ -47,7 +48,7 @@ public class DocumentLoader {
             Reader reader = new InputStreamReader(ifs, StandardCharsets.UTF_8);
             PreordainDocument doc = gson.fromJson(reader, PreordainDocument.class);
             documents.get().put(doc.getKey(), doc);
-        } catch (IllegalArgumentException e) {
+        } catch (JsonSyntaxException e) {
             Preordain.LOGGER.error("Error while loading file {}: {}", name, e.getMessage());
         }
     }
