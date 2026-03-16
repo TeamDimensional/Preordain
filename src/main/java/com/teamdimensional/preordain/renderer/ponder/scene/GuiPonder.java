@@ -25,10 +25,13 @@ import com.teamdimensional.preordain.renderer.ponder.world.RenderWorldPonder;
 import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -55,9 +58,17 @@ public class GuiPonder extends GuiScreen {
         GlStateManager.pushMatrix();
         ScaledResolution resolution = new ScaledResolution(this.mc);
 
+        //enable perspective
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+        GLU.gluPerspective(60.0f, width / (height * 1.0f), 10.0f, 10000.0f);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+
         //epic matrix transforms
-        GlStateManager.translate(resolution.getScaledWidth_double() * 0.5, resolution.getScaledHeight_double() * 0.5, -200.0);
-        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.translate(0, 0, -200.0);
         double scale = MathHelper.clampedLerp(this.ponder.scaleOld, this.ponder.scale, partialTicks) * 16.0;
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.translate(this.ponder.offsetX - 0.5, this.ponder.offsetY - 0.5F, this.ponder.offsetZ - 0.5);
@@ -71,7 +82,7 @@ public class GuiPonder extends GuiScreen {
 
         //rendering
         GlStateManager.clearDepth(1.0);
-        GlStateManager.depthFunc(GL11.GL_GREATER);
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.color(1.0F, 1.0F, 1.0F);
@@ -95,9 +106,15 @@ public class GuiPonder extends GuiScreen {
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.depthMask(true);
 
+        // Undo perspective
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
-        GlStateManager.depthFunc(GL11.GL_LEQUAL);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.popMatrix();
+
+        GlStateManager.popMatrix();
         GlStateManager.clearDepth(1.0);
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         if (!this.ponder.displayedTooltips.isEmpty()) {
@@ -194,6 +211,35 @@ public class GuiPonder extends GuiScreen {
                 render.doRender(entity, entity.posX, entity.posY, entity.posZ, entity.rotationYaw, pt);
             }
         }
+    }
+
+    Integer lastPosX = null, lastPosY = null;
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        lastPosX = mouseX;
+        lastPosY = mouseY;
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        lastPosX = lastPosY = null;
+    }
+
+    public static final double X_SENSITIVITY = 0.5;
+    public static final double Y_SENSITIVITY = 0.5;
+
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        if (lastPosX != null && lastPosY != null) {
+            double deltaX = mouseX - lastPosX;
+            double deltaY = mouseY - lastPosY;
+            ponder.yaw += deltaX * X_SENSITIVITY;
+            ponder.pitch += deltaY * Y_SENSITIVITY;
+        }
+        lastPosX = mouseX;
+        lastPosY = mouseY;
     }
 
     @ParametersAreNonnullByDefault
