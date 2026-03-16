@@ -70,7 +70,7 @@ public class GuiPonder extends GuiScreen {
         GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, this.buf);
 
         //rendering
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GlStateManager.clearDepth(1.0);
         GlStateManager.depthFunc(GL11.GL_GREATER);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -97,7 +97,7 @@ public class GuiPonder extends GuiScreen {
 
         GlStateManager.popMatrix();
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GlStateManager.clearDepth(1.0);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         if (!this.ponder.displayedTooltips.isEmpty()) {
@@ -141,7 +141,7 @@ public class GuiPonder extends GuiScreen {
     public void onGuiClosed() {
         RenderWorldPonder.delete();
         this.initialized = false;
-        Preordain.LOGGER.info("GUI is closed!");
+        Preordain.LOGGER.debug("GUI is closed!");
     }
 
     @Override
