@@ -5,13 +5,11 @@ import com.teamdimensional.preordain.library.RevertibleRegistry;
 import com.teamdimensional.preordain.renderer.PreordainRenderingManager;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber
 public class DocumentItemLinker {
     final RevertibleRegistry<Map<String, PreordainDocument>> links
         = new RevertibleRegistry<>(Object2ObjectOpenHashMap::new);
