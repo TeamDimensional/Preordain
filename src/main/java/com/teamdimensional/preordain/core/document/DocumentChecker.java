@@ -60,13 +60,16 @@ public class DocumentChecker {
                 throw new DocumentCheckingException("Recursion while loading preordains", getChain(key));
             case UNCHECKED:
                 statuses.put(key, CheckStatus.CHECKING);
-                check(docs.get(key));
+                check(key, docs.get(key));
                 statuses.put(key, CheckStatus.CHECKED);
                 break;
         }
     }
 
-    private void check(PreordainDocument doc) throws DocumentCheckingException {
+    private void check(String key, PreordainDocument doc) throws DocumentCheckingException {
+        if (doc == null) {
+            throw new DocumentCheckingException("Unknown document: " + key, getChain(key));
+        }
         for (PreordainFunction func : doc.getFunctions()) {
             func.check(this);
         }
