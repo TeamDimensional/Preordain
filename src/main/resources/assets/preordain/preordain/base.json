@@ -1,6 +1,5 @@
 {
   "key": "preordain:base",
-  "visible": false,
   "functions": [
     {
       "name": "preordain:checkerboard",

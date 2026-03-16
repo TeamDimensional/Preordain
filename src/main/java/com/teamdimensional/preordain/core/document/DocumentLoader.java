@@ -3,8 +3,11 @@ package com.teamdimensional.preordain.core.document;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.teamdimensional.preordain.Preordain;
+import com.teamdimensional.preordain.core.document.DocumentChecker.DocumentCheckingException;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.core.function.PreordainFunctionDeserializer;
+import com.teamdimensional.preordain.library.RevertibleRegistry;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
@@ -16,8 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 public class DocumentLoader {
-    public final Map<String, PreordainDocument> documents = new Object2ObjectOpenHashMap<>();
+    private final RevertibleRegistry<Map<String, PreordainDocument>> documents
+        = new RevertibleRegistry<>(Object2ObjectOpenHashMap::new);
     private final String DOCUMENT_PATH = "preordain";
     private final Gson gson = new GsonBuilder()
         .registerTypeAdapter(PreordainFunction.class, new PreordainFunctionDeserializer())
@@ -30,7 +36,7 @@ public class DocumentLoader {
         try {
             Reader reader = new InputStreamReader(ifs, StandardCharsets.UTF_8);
             PreordainDocument doc = gson.fromJson(reader, PreordainDocument.class);
-            documents.put(doc.getKey(), doc);
+            documents.get().put(doc.getKey(), doc);
         } catch (IllegalArgumentException e) {
             Preordain.LOGGER.error("Error while loading file {}: {}", name, e.getMessage());
         }
@@ -49,8 +55,8 @@ public class DocumentLoader {
     }
 
     public void load() {
-        documents.clear();
-        linker.links.clear();
+        documents.beginTransaction();
+        linker.links.beginTransaction();
 
         // load modded preordains
         List<ModContainer> mods = Loader.instance().getActiveModList();
@@ -83,17 +89,34 @@ public class DocumentLoader {
             }
         }
 
-        Preordain.LOGGER.info("Loaded " + documents.size() + " files");
+        Preordain.LOGGER.info("Loaded " + count() + " files");
     }
 
-    public void init() {
-        for (Map.Entry<String, PreordainDocument> entry : documents.entrySet()) {
-            try {
-                entry.getValue().initialize(this);
-            } catch (IllegalArgumentException e) {
-                Preordain.LOGGER.error("Error while initializing file {}: {}", entry.getKey(), e.getMessage());
-                entry.getValue().markInitialized();
-            }
+    public boolean init() {
+        for (Map.Entry<String, PreordainDocument> entry : documents.get().entrySet()) {
+            entry.getValue().loadLinks(this.linker);
         }
+
+        DocumentChecker checker = new DocumentChecker(documents.get());
+        try {
+            checker.check();
+        } catch (DocumentCheckingException e) {
+            Preordain.LOGGER.error(
+                "Error while validating documents at chain: {}. Error message: {}.",
+                String.join(" -> ", e.dependencyChain.toArray(new String[]{})), e.getMessage());
+            documents.undo();
+            linker.links.undo();
+            return false;
+        }
+
+        return true;
+    }
+
+    public @Nullable PreordainDocument getDocument(String name) {
+        return documents.get().get(name);
+    }
+
+    public int count() {
+        return documents.get().size();
     }
 }

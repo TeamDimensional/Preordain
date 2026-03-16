@@ -2,6 +2,7 @@ package com.teamdimensional.preordain.library.function;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
 import com.teamdimensional.preordain.renderer.ponder.world.WorldPonder;
@@ -23,7 +24,7 @@ public class FunctionBlock extends PreordainFunction {
         world.setBlockState(position, state);
     }
 
-    public static FunctionBlock create(JsonElement e) {
+    public static FunctionBlock create(JsonElement e) throws JsonParseException {
         JsonObject json = e.getAsJsonObject();
         BlockPos pos = DataSerializers.getBlockPos(json.get("pos"));
         IBlockState state = DataSerializers.getBlockState(json.get("block"));

@@ -2,4 +2,7 @@ tooltip.preordain.observe=Press [%s] to observe
 keybind.preordain.observe=Observe
 keybind.preordain.category=Preordain
 
+command.preordain_reload.success=Reloaded %d documents!
+command.preordain_reload.failure=Unable to reload the documents! Check logs for more information.
+
 gui.preordain.title=Observing...

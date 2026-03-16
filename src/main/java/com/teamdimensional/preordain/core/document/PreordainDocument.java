@@ -9,13 +9,10 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PreordainDocument {
 
     private String key = null;
-    private String parent = null;
     private List<PreordainFunction> functions = new ArrayList<>();
     private String title = "";
     private String[] links = null;
@@ -27,37 +24,17 @@ public class PreordainDocument {
         return title;
     }
 
-    private transient int initState = 0;
-
-    public void initialize(DocumentLoader loader) {
-        if (initState == 1) throw new IllegalArgumentException("Illegal loop detected while resolving parents");
-        if (initState == 2) return;
-        initState = 1;
-
-        if (parent != null) {
-            if (!loader.documents.containsKey(parent)) {
-                throw new IllegalArgumentException("Unknown document parent: " + parent);
-            }
-            PreordainDocument parentDoc = loader.documents.get(parent);
-            parentDoc.initialize(loader);
-            functions = Stream.concat(parentDoc.getFunctions().stream(), functions.stream()).collect(Collectors.toList());
-        }
+    public void loadLinks(DocumentItemLinker linker) {
         if (links != null) {
             try {
                 for (String s : links) {
                     ItemStack stack = DataSerializers.getStack(s);
-                    loader.linker.registerLink(this, stack);
+                    linker.registerLink(this, stack);
                 }
             } catch (JsonParseException e) {
                 Preordain.LOGGER.warn("Unknown item to bind document {} to! It won't be displayed.", key);
             }
         }
-
-        initState = 2;
-    }
-
-    void markInitialized() {
-        initState = 2;
     }
 
     public String getKey() {
@@ -67,10 +44,14 @@ public class PreordainDocument {
         return key;
     }
 
-    public void initialize(PreordainPlanner planner) {
+    public void initialize(PreordainPlanner planner, long delay) {
         for (PreordainFunction function : functions) {
-            planner.register(function, function.getDelay());
+            planner.register(function, function.getDelay() + delay);
         }
+    }
+
+    public void initialize(PreordainPlanner planner) {
+        initialize(planner, 0);
     }
 
 }

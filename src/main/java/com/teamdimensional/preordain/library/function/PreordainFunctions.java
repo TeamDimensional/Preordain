@@ -8,6 +8,7 @@ public class PreordainFunctions {
         PreordainFunctionRegistry.register("preordain:block", FunctionBlock::create);
         PreordainFunctionRegistry.register("preordain:fill", FunctionFill::create);
         PreordainFunctionRegistry.register("preordain:checkerboard", FunctionCheckerboard::create);
+        PreordainFunctionRegistry.register("preordain:subdocument", FunctionSubdocument::create);
     }
 
 }

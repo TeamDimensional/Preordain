@@ -1,6 +1,7 @@
 package com.teamdimensional.preordain.core.function;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.api.IPreordainFunctionFactory;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -19,7 +20,7 @@ public class PreordainFunctionRegistry {
         factories.put(name, factory);
     }
 
-    public static PreordainFunction create(String key, JsonElement data) {
+    public static PreordainFunction create(String key, JsonElement data) throws JsonParseException {
         IPreordainFunctionFactory factory = factories.get(key);
         if (factory == null) {
             throw new IllegalArgumentException("Preordain function '" + key + "' not found");

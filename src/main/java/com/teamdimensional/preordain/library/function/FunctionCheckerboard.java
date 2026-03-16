@@ -2,6 +2,7 @@ package com.teamdimensional.preordain.library.function;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.teamdimensional.preordain.Preordain;
 import com.teamdimensional.preordain.core.function.PreordainFunction;
 import com.teamdimensional.preordain.library.serialization.DataSerializers;
@@ -37,7 +38,7 @@ public class FunctionCheckerboard extends PreordainFunction {
         Preordain.LOGGER.debug("Added {} blocks", b);
     }
 
-    public static FunctionCheckerboard create(JsonElement e) {
+    public static FunctionCheckerboard create(JsonElement e) throws JsonParseException {
         JsonObject json = e.getAsJsonObject();
         AxisAlignedBB boundingBox = DataSerializers.getBoundingBox(json.get("bbox"));
         IBlockState state1 = DataSerializers.getBlockState(json.get("block1"));
