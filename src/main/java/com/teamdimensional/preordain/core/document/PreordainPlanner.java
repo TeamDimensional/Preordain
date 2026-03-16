@@ -17,7 +17,7 @@ public class PreordainPlanner {
     public boolean tick(WorldPonder world, long ticks) {
         boolean requiresUpdate = false;
         for (PreordainFunction f : functions.get(ticks)) {
-            Preordain.LOGGER.info("Applying function: " + f);
+            Preordain.LOGGER.debug("Applying function: " + f);
             f.apply(world);
             requiresUpdate = requiresUpdate || f.requiresMeshUpdate();
         }

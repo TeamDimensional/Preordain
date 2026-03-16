@@ -17,14 +17,16 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DocumentLoader {
-    public static final Map<String, PreordainDocument> documents = new Object2ObjectOpenHashMap<>();
-    private static final String DOCUMENT_PATH = "preordain";
-    private static final Gson gson = new GsonBuilder()
+    public final Map<String, PreordainDocument> documents = new Object2ObjectOpenHashMap<>();
+    private final String DOCUMENT_PATH = "preordain";
+    private final Gson gson = new GsonBuilder()
         .registerTypeAdapter(PreordainFunction.class, new PreordainFunctionDeserializer())
         .create();
+    private File instanceDir = null;
+    public final DocumentItemLinker linker = new DocumentItemLinker();
 
-    private static void loadFile(String name, InputStream ifs) {
-        Preordain.LOGGER.info("Found Preordain document at {}", name);
+    private void loadFile(String name, InputStream ifs) {
+        Preordain.LOGGER.debug("Found Preordain document at {}", name);
         try {
             Reader reader = new InputStreamReader(ifs, StandardCharsets.UTF_8);
             PreordainDocument doc = gson.fromJson(reader, PreordainDocument.class);
@@ -34,7 +36,7 @@ public class DocumentLoader {
         }
     }
 
-    private static void loadFile(File file) {
+    private void loadFile(File file) {
         try (FileInputStream ifs = new FileInputStream(file)) {
             loadFile(file.toString(), ifs);
         } catch (IOException e) {
@@ -42,10 +44,13 @@ public class DocumentLoader {
         }
     }
 
-    public static void load(File instanceDir) {
-        // delete the old data in case someone made us reloadable
+    public DocumentLoader(File instanceDir) {
+        this.instanceDir = instanceDir;
+    }
+
+    public void load() {
         documents.clear();
-        DocumentItemLinker.links.clear();
+        linker.links.clear();
 
         // load modded preordains
         List<ModContainer> mods = Loader.instance().getActiveModList();
@@ -77,12 +82,14 @@ public class DocumentLoader {
                 loadFile(file);
             }
         }
+
+        Preordain.LOGGER.info("Loaded " + documents.size() + " files");
     }
 
-    public static void init() {
+    public void init() {
         for (Map.Entry<String, PreordainDocument> entry : documents.entrySet()) {
             try {
-                entry.getValue().initialize();
+                entry.getValue().initialize(this);
             } catch (IllegalArgumentException e) {
                 Preordain.LOGGER.error("Error while initializing file {}: {}", entry.getKey(), e.getMessage());
                 entry.getValue().markInitialized();

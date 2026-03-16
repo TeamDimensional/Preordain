@@ -34,7 +34,7 @@ public class FunctionCheckerboard extends PreordainFunction {
                 }
             }
         }
-        Preordain.LOGGER.info("Added {} blocks", b);
+        Preordain.LOGGER.debug("Added {} blocks", b);
     }
 
     public static FunctionCheckerboard create(JsonElement e) {

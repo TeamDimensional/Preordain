@@ -38,7 +38,7 @@ public class RenderWorldPonder {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         Set<Map.Entry<BlockPos, IBlockState>> blocks = ponder.scene.blocks.entrySet();
-        Preordain.LOGGER.info("Rendering {} blocks", blocks.size());
+        Preordain.LOGGER.debug("Rendering {} blocks", blocks.size());
 
         GlStateManager.glNewList(worldDisplayLists[0], GL11.GL_COMPILE);
         builder.begin(7, DefaultVertexFormats.BLOCK);

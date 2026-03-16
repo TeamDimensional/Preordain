@@ -1,13 +1,10 @@
 package com.teamdimensional.preordain.core;
 
-import com.teamdimensional.preordain.core.document.DocumentItemLinker;
+import com.teamdimensional.preordain.Preordain;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -15,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 @Mod.EventBusSubscriber
 public class PreordainTooltipManager {
@@ -40,6 +36,15 @@ public class PreordainTooltipManager {
     }
 
     @SubscribeEvent
+    public static void addTooltip(ItemTooltipEvent event) {
+        if (event.getEntityPlayer() == null)
+            return;
+        if (Preordain.loader.linker.hasLink(event.getItemStack())) {
+            PreordainTooltipManager.INSTANCE.manageTooltip(event);
+        }
+    }
+
+    @SubscribeEvent
     public static void doTick(TickEvent.ClientTickEvent e) {
 
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -60,24 +65,9 @@ public class PreordainTooltipManager {
                 timeSpent = 0;
                 ItemStack theStack = managedStack;
                 managedStack = null;
-                DocumentItemLinker.showDocumentForItem(theStack);
+                Preordain.loader.linker.showDocumentForItem(theStack);
             }
         }
-    }
-
-    private static ItemStack getHoveredItem() {
-        Container c = Minecraft.getMinecraft().player.openContainer;
-        if (c == null) return null;
-        GuiScreen sc = Minecraft.getMinecraft().currentScreen;
-        if (sc == null) return null;
-        int xPos = Mouse.getEventX() * Minecraft.getMinecraft().displayWidth / sc.width;
-        int yPos = Mouse.getEventY() * Minecraft.getMinecraft().displayHeight / sc.height;
-        for (Slot s : c.inventorySlots) {
-            if (s.xPos <= xPos && xPos < s.xPos + 16 && s.yPos <= yPos && yPos < s.yPos + 16) {
-                return s.getStack();
-            }
-        }
-        return null;
     }
 
     public void manageTooltip(ItemTooltipEvent event) {

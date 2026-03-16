@@ -129,7 +129,7 @@ public class GuiPonder extends GuiScreen {
         if (this.initialized) return;
         RenderWorldPonder.reserve(this.ponder);
         this.initialized = true;
-        Preordain.LOGGER.info("GUI is initialized!");
+        Preordain.LOGGER.debug("GUI is initialized!");
     }
 
     @Override

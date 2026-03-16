@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 
 public class PreordainRenderingManager {
     public static void showDocument(PreordainDocument doc) {
-        Preordain.LOGGER.info("Showing document: {}", doc.getKey());
+        Preordain.LOGGER.debug("Showing document: {}", doc.getKey());
 
         GuiPonder gui = new GuiPonder(
                 Minecraft.getMinecraft().currentScreen,
