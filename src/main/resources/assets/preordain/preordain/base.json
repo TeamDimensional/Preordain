@@ -5,9 +5,9 @@
     {
       "name": "preordain:checkerboard",
       "data": {
-        "bbox": [[-4, -4, -4], [4, 4, 4]],
-        "block1": "minecraft:stone:1",
-        "block2": "minecraft:wool"
+        "bbox": [[-4, 0, -4], [4, 0, 4]],
+        "block1": "minecraft:stone",
+        "block2": "minecraft:concrete"
       }
     }
   ]
